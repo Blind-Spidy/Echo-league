@@ -1,0 +1,280 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Echo League Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Rajdhani', sans-serif;
+      background: linear-gradient(135deg, #0c0c0c, #1a1a1a);
+      color: white;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    .intro {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #000;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      animation: fadeOut 2s 2s forwards;
+    }
+    .intro img {
+      width: 100px;
+      animation: zoomIn 1s ease;
+      margin-bottom: 10px;
+    }
+    .intro h1 {
+      color: #ff4655;
+      font-size: 2rem;
+      animation: fadeInUp 1s ease;
+    }
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes zoomIn {
+      from {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+    .admin-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      opacity: 0;
+      animation: fadeInUp 1s ease 2s forwards;
+    }
+    .admin-logo {
+      width: 80px;
+      margin-bottom: 10px;
+    }
+    h2 {
+      color: #ff4655;
+      margin-bottom: 20px;
+    }
+    .category-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 800px;
+      gap: 40px;
+    }
+    .team-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+    .team-list-title {
+      font-size: 18px;
+      color: #ff4655;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #ff4655;
+      width: 100%;
+    }
+    .team-item {
+      background: #1f1f1f;
+      padding: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      border-left: 5px solid #ff4655;
+      transition: background 0.3s;
+    }
+    .team-item:hover {
+      background: #292929;
+    }
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #202020;
+      padding: 20px;
+      border-radius: 10px;
+      z-index: 2000;
+      display: none;
+      box-shadow: 0 0 15px rgba(255, 70, 85, 0.5);
+      width: 90%;
+      max-width: 500px;
+    }
+    .popup h3 {
+      margin-top: 0;
+      color: #ff4655;
+    }
+    .popup .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    .popup button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      flex: 1;
+      min-width: 30%;
+    }
+    .accept {
+      background-color: #4caf50;
+      color: white;
+    }
+    .reject {
+      background-color: #f44336;
+      color: white;
+    }
+    .delete {
+      background-color: #999;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="intro">
+    <img src="https://i.postimg.cc/J0J4yPMp/IMG-20250625-212852.png" alt="Logo">
+    <h1>Echo League</h1>
+  </div>  <div class="admin-container">
+    <img src="https://i.postimg.cc/J0J4yPMp/IMG-20250625-212852.png" class="admin-logo" alt="Echo Logo">
+    <h2>Admin Panel</h2>
+    <div class="category-section">
+      <div class="team-list">
+        <div class="team-list-title">Unchecked</div>
+        <div id="teamListUnchecked"></div>
+      </div>
+      <div class="team-list">
+        <div class="team-list-title">Checked</div>
+        <div id="teamListChecked"></div>
+      </div>
+    </div>
+  </div>  <div class="popup" id="popup">
+    <h3 id="popupTeam">Team Name</h3>
+    <p><strong>Captain:</strong> <span id="popupCaptain"></span></p>
+    <p><strong>WhatsApp:</strong> <span id="popupWhatsapp"></span></p>
+    <p><strong>Discord:</strong> <span id="popupDiscord"></span></p>
+    <div class="actions">
+      <button class="accept" id="acceptBtn" onclick="handleAction('accept')">Accept</button>
+      <button class="reject" id="rejectBtn" onclick="handleAction('reject')">Reject</button>
+      <button class="delete" onclick="handleAction('delete')">Delete</button>
+    </div>
+  </div>  <script>
+    const BIN_ID = "685be2528a456b7966b5594a";
+    const MASTER_KEY = "$2a$10$NNzgv0WB8k1HgR8pB.GhUe/.fkAY5PcY8qJYNZp0jut6ekD/5cg6S";
+    let selectedIndex = null;
+    let selectedGroup = null;
+    let teamData = { checked: [], unchecked: [] };
+
+    async function loadTeams() {
+      const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+        headers: { 'X-Master-Key': MASTER_KEY }
+      });
+      const json = await res.json();
+      teamData = json.record;
+      renderTeams();
+    }
+
+    function renderTeams() {
+      const uncheckedList = document.getElementById("teamListUnchecked");
+      const checkedList = document.getElementById("teamListChecked");
+      uncheckedList.innerHTML = "";
+      checkedList.innerHTML = "";
+
+      teamData.unchecked.forEach((team, i) => {
+        const div = document.createElement("div");
+        div.className = "team-item";
+        div.textContent = team.team;
+        div.onclick = () => showPopup(i, 'unchecked');
+        uncheckedList.appendChild(div);
+      });
+
+      teamData.checked.forEach((team, i) => {
+        const div = document.createElement("div");
+        div.className = "team-item";
+        div.textContent = team.team;
+        div.onclick = () => showPopup(i, 'checked');
+        checkedList.appendChild(div);
+      });
+    }
+
+    function showPopup(index, group) {
+      selectedIndex = index;
+      selectedGroup = group;
+      const team = teamData[group][index];
+      document.getElementById("popupTeam").textContent = team.team;
+      document.getElementById("popupCaptain").textContent = team.captain;
+      document.getElementById("popupWhatsapp").textContent = team.whatsapp;
+      document.getElementById("popupDiscord").textContent = team.discord;
+
+      // Show or hide buttons
+      document.getElementById("acceptBtn").style.display = group === 'unchecked' ? 'inline-block' : 'none';
+      document.getElementById("rejectBtn").style.display = group === 'unchecked' ? 'inline-block' : 'none';
+
+      document.getElementById("popup").style.display = "block";
+    }
+
+    async function handleAction(action) {
+      if (selectedIndex === null) return;
+
+      if (action === 'delete') {
+        teamData[selectedGroup].splice(selectedIndex, 1);
+      } else if (selectedGroup === 'unchecked') {
+        const team = teamData.unchecked[selectedIndex];
+        teamData.unchecked.splice(selectedIndex, 1);
+        if (action === 'accept' || action === 'reject') {
+          teamData.checked.push(team);
+        }
+      }
+
+      await updateBin();
+      document.getElementById("popup").style.display = "none";
+      selectedIndex = null;
+      selectedGroup = null;
+      renderTeams();
+    }
+
+    async function updateBin() {
+      await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Master-Key": MASTER_KEY
+        },
+        body: JSON.stringify(teamData)
+      });
+    }
+
+    window.onload = loadTeams;
+  </script></body>
+</html>
