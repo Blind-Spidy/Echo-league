@@ -1,0 +1,245 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Echo League – Season 1</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Rajdhani', sans-serif;
+      background: linear-gradient(135deg, #0c0c0c, #1a1a1a);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      overflow: hidden;
+    }
+    .intro {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #000;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      animation: fadeOut 2s 2s forwards;
+    }
+    .intro img {
+      width: 100px;
+      margin-bottom: 10px;
+      animation: zoomIn 1s ease;
+    }
+    .intro h1 {
+      color: #ff4655;
+      font-size: 2rem;
+      letter-spacing: 2px;
+      animation: fadeInUp 1s ease;
+    }
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @keyframes zoomIn {
+      from {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+    .container {
+      background: #131313;
+      border-radius: 16px;
+      padding: 40px 30px;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: 0 0 40px rgba(255, 70, 85, 0.4);
+      border: 2px solid #ff4655;
+      text-align: center;
+      opacity: 0;
+      animation: fadeInUp 1s ease 2s forwards;
+    }
+    .logo {
+      width: 120px;
+      display: block;
+      margin: 0 auto;
+    }
+    .header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 16px;
+    }
+    h1 {
+      color: #ff4655;
+      font-size: 2.2rem;
+      margin: -4px 0 0;
+      letter-spacing: 1px;
+    }
+    p {
+      color: #aaa;
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: #1e1e1e;
+      color: white;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+    input:focus {
+      outline: none;
+      border: 2px solid #ff4655;
+      box-shadow: 0 0 10px #ff4655;
+    }
+    .register-btn {
+      width: 100%;
+      padding: 14px;
+      background: grey;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: not-allowed;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .register-btn.active {
+      background: #ff4655;
+      cursor: pointer;
+    }
+    .register-btn.active:hover {
+      background: #ff5e6d;
+      transform: scale(1.03);
+    }
+    .message {
+      margin-top: 15px;
+      font-size: 13px;
+      color: lightgreen;
+      display: none;
+    }
+    @media (max-width: 480px) {
+      .container {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="intro">
+    <img src="https://i.postimg.cc/J0J4yPMp/IMG-20250625-212852.png" alt="Logo">
+    <h1>Echo League</h1>
+  </div>  <div class="container">
+    <div class="header">
+      <img src="https://i.postimg.cc/J0J4yPMp/IMG-20250625-212852.png" alt="Echo League Logo" class="logo">
+      <h1 style="margin-top: -4px;">Echo League</h1>
+    </div>
+    <p>Season 1 Registration – Prove your squad. Climb the leaderboard.</p>
+    <form id="registerForm">
+      <div class="form-group">
+        <input type="text" name="team" placeholder="Team Name" required />
+      </div>
+      <div class="form-group">
+        <input type="text" name="captain" placeholder="Captain (username#1234)" required />
+      </div>
+      <div class="form-group">
+        <input type="text" name="whatsapp" placeholder="WhatsApp Number" required />
+      </div>
+      <div class="form-group">
+        <input type="text" name="discord" placeholder="Discord ID" required />
+      </div>
+      <button type="submit" class="register-btn" disabled>Register Now</button>
+    </form>
+    <div class="message" id="successMessage">
+      ✅ Registration successful! You will be contacted via WhatsApp or Discord.
+    </div>
+  </div>  <script>
+    const BIN_ID = "685be2528a456b7966b5594a";
+    const MASTER_KEY = "$2a$10$NNzgv0WB8k1HgR8pB.GhUe/.fkAY5PcY8qJYNZp0jut6ekD/5cg6S";
+
+    async function addTeamToBin(newTeam) {
+      const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+        headers: { 'X-Master-Key': MASTER_KEY }
+      });
+      const json = await res.json();
+      const data = json.record;
+
+      data.unchecked.push(newTeam);
+
+      await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Master-Key": MASTER_KEY
+        },
+        body: JSON.stringify(data)
+      });
+    }
+
+    const form = document.getElementById("registerForm");
+    const button = form.querySelector(".register-btn");
+    const inputs = form.querySelectorAll("input");
+
+    inputs.forEach(input => {
+      input.addEventListener("input", () => {
+        const allFilled = [...inputs].every(i => i.value.trim() !== "");
+        button.disabled = !allFilled;
+        button.classList.toggle("active", allFilled);
+      });
+    });
+
+    form.addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const teamData = {
+        team: this.team.value,
+        captain: this.captain.value,
+        whatsapp: this.whatsapp.value,
+        discord: this.discord.value
+      };
+
+      try {
+        await addTeamToBin(teamData);
+        document.getElementById("successMessage").style.display = "block";
+        this.reset();
+        button.disabled = true;
+        button.classList.remove("active");
+      } catch (error) {
+        alert("❌ Error submitting registration. Try again.");
+        console.error(error);
+      }
+    });
+  </script></body>
+</html>
