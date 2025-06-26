@@ -18,10 +18,11 @@
       align-items: center;
       min-height: 100vh;
       padding: 20px;
-      overflow: hidden;
+      overflow-y: auto; /* ✅ Fix scroll */
+      flex-direction: column;
     }
     .intro {
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
       right: 0;
@@ -150,6 +151,35 @@
       color: lightgreen;
       display: none;
     }
+
+    /* Contact section */
+    .contact {
+      margin-top: 40px;
+      text-align: center;
+      animation: fadeInUp 1s ease 2.5s forwards;
+      opacity: 0;
+    }
+    .contact h3 {
+      color: #ff4655;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    .contact-icons {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin-top: 10px;
+    }
+    .contact-icons a img {
+      width: 34px;
+      filter: brightness(0) saturate(100%) invert(29%) sepia(99%) saturate(1600%) hue-rotate(-11deg) brightness(98%) contrast(108%);
+      transition: transform 0.3s, filter 0.3s;
+    }
+    .contact-icons a:hover img {
+      transform: scale(1.15);
+      filter: drop-shadow(0 0 6px #ff4655);
+    }
+
     @media (max-width: 480px) {
       .container {
         padding: 30px 20px;
@@ -161,7 +191,9 @@
   <div class="intro">
     <img src="https://i.postimg.cc/J0J4yPMp/IMG-20250625-212852.png" alt="Logo">
     <h1>Echo League</h1>
-  </div>  <div class="container">
+  </div>
+
+  <div class="container">
     <div class="header">
       <img src="https://i.postimg.cc/J0J4yPMp/IMG-20250625-212852.png" alt="Echo League Logo" class="logo">
       <h1 style="margin-top: -4px;">Echo League</h1>
@@ -185,7 +217,21 @@
     <div class="message" id="successMessage">
       ✅ Registration successful! You will be contacted via WhatsApp or Discord.
     </div>
-  </div>  <script>
+
+    <div class="contact">
+      <h3>Contact Us For All Questions</h3>
+      <div class="contact-icons">
+        <a href="https://discord.com/channels/1386403060409958562/1387800673051213834" target="_blank">
+          <img src="https://img.icons8.com/ios-filled/50/ffffff/discord-logo.png" alt="Discord">
+        </a>
+        <a href="https://www.instagram.com/Echo.eSports_s1" target="_blank">
+          <img src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png" alt="Instagram">
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
     const BIN_ID = "685be2528a456b7966b5594a";
     const MASTER_KEY = "$2a$10$NNzgv0WB8k1HgR8pB.GhUe/.fkAY5PcY8qJYNZp0jut6ekD/5cg6S";
 
@@ -241,5 +287,6 @@
         console.error(error);
       }
     });
-  </script></body>
-</html>
+  </script>
+</body>
+  </html>
